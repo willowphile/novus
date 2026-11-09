@@ -231,9 +231,28 @@
 
 
   // ---------- 6. TOOLBAR: SEARCH, COLUMNS MENU, RESET ----------
+  var searchTimer = null;                  // waits for typing to stop before telling Pendo
+
   document.getElementById('table-search').addEventListener('input', function (event) {
     searchText = event.target.value.trim().toLowerCase();
     draw();
+
+    // The table filters on every keystroke, so wait until typing has paused
+    // for half a second, then send ONE Pendo event with the final query and
+    // how many rows matched. An empty box (search cleared) isn't sent.
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function () {
+      if (!searchText) return;
+      if (window.pendo && pendo.track) {
+        pendo.track('table_search_performed', {
+          searchText: searchText.slice(0, 100),
+          resultsCount: currentRows().length,
+          totalRows: rows.length,
+          sortKey: sort.key || 'none',
+          sortDir: sort.dir || 'none'
+        });
+      }
+    }, 500);
   });
 
   // Open / close the Columns popover.

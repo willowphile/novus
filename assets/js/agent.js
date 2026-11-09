@@ -20,8 +20,9 @@
      </div>
 
    WHERE TO HOOK IN AGENT TRACKING: look for onAgentEvent() below. It is
-   called for every send, reply and feedback click. Right now it only logs
-   to the console; add your own tracking call inside it.
+   called for every send, reply and feedback click. It logs everything to
+   the console, and sends "send" and "reply" to Pendo as track events
+   (agent_message_sent and agent_reply_completed).
    ===================================================================== */
 
 (function () {
@@ -30,37 +31,39 @@
   // Checked top to bottom; the first "match" found in your message wins.
   // steps   = optional tool-step lines shown before the answer
   // sources = optional links shown under the answer
+  // topic   = a short name for the reply, sent to Pendo as matchedTopic
   var REPLIES = [
-    { match: /\b(hello|hi|hey)\b/i,
+    { match: /\b(hello|hi|hey)\b/i, topic: 'greeting',
       text: "Hi there! I'm the fAIke Assistant. I can answer questions about tagging, guides and this site.",
       steps: [], sources: [] },
 
-    { match: /tag|feature|button|click/i,
+    { match: /tag|feature|button|click/i, topic: 'tagging',
       text: "To tag a feature, open the Pendo Designer, choose Tag Feature, then click the element on the page. Try the Page Elements section for practice, and watch out for dynamic ids and identical twins.",
       steps: ['Searching the knowledge base…'],
       sources: [{ label: 'Page Elements', href: '#tagging' }, { label: 'Data Table', href: '#guides-table' }] },
 
-    { match: /guide|modal|tooltip|walkthrough/i,
+    { match: /guide|modal|tooltip|walkthrough/i, topic: 'guides',
       text: "Guides are in-app messages. You target them at a page or an element. The Guide Targeting section has pages for tooltips, scrolling targets, hidden elements and duplicated DOM.",
       steps: ['Searching the knowledge base…', 'Reading 3 articles…'],
       sources: [{ label: 'Tooltip Targets', href: '#guides-targets' }, { label: 'Scroll to Reveal', href: '#guides-reveal' }] },
 
-    { match: /cart|checkout|order|shop/i,
+    { match: /cart|checkout|order|shop/i, topic: 'checkout',
       text: "There's a mock shop in Multi-step Processes. Add items to the cart, apply the promo code PURPLE10, and run through checkout. Nothing is charged.",
       steps: ['Looking up the checkout flow…'],
       sources: [{ label: 'Checkout', href: '#checkout-shop' }] },
 
-    { match: /joke|funny/i,
+    { match: /joke|funny/i, topic: 'joke',
       text: "Why did the guide cross the page? To get to the other tooltip.",
       steps: [], sources: [] },
 
-    { match: /thank/i,
+    { match: /thank/i, topic: 'thanks',
       text: "You're welcome! Anything else I can help with?",
       steps: [], sources: [] }
   ];
 
   // Used when nothing above matched.
   var FALLBACK = {
+    topic: 'fallback',
     text: "I'm just a mock agent, so I only know a few topics: tagging, guides, the shop, and jokes. Try asking about one of those.",
     steps: [], sources: []
   };
@@ -69,10 +72,19 @@
 
 
   // ---------- 2. TRACKING HOOK ----------
-  // Called with an event name and some details. Add your tracking here.
+  // Called with an event name and some details. Every event is logged to
+  // the console. The ones listed in PENDO_EVENTS are also sent to Pendo as
+  // track events, under the Pendo name shown (copy/feedback are console only).
+  var PENDO_EVENTS = {
+    send:  'agent_message_sent',      // a message really went to the agent
+    reply: 'agent_reply_completed'    // the agent finished typing its reply
+  };
+
   function onAgentEvent(name, details) {
     console.log('[agent]', name, details);
-    // e.g. window.pendo && pendo.track('Agent ' + name, details);
+    if (PENDO_EVENTS[name] && window.pendo && pendo.track) {
+      pendo.track(PENDO_EVENTS[name], details);
+    }
   }
 
 
@@ -162,18 +174,34 @@
         '<button class="msg-action action-down"  aria-label="Bad answer">👎</button>' +
       '</div>');
 
-    onAgentEvent('reply', { messageId: msg.getAttribute('data-message-id'), text: reply.text });
+    // The reply is fully typed out. (The reply text itself isn't sent; it's
+    // canned, so the topic and length say enough.)
+    onAgentEvent('reply', {
+      messageId: msg.getAttribute('data-message-id'),
+      matchedTopic: reply.topic,
+      isFallback: reply === FALLBACK,
+      stepCount: reply.steps.length,
+      sourceCount: reply.sources.length,
+      replyLength: reply.text.length
+    });
     scrollToBottom();
     setBusy(false);
     input.focus();
   }
 
   // Send whatever is in the text box (or a suggestion's text).
-  function send(text) {
+  // inputMethod says how it was sent: 'button', 'enter' or 'suggestion'.
+  function send(text, inputMethod) {
     text = (text || '').trim();
-    if (!text || busy) return;
-    addMessage('user', text);
-    onAgentEvent('send', { text: text });
+    if (!text || busy) return;            // empty or agent busy: nothing is sent, nothing tracked
+    var msg = addMessage('user', text);
+    onAgentEvent('send', {
+      messageId: msg.getAttribute('data-message-id'),
+      text: text.slice(0, 100),           // keep the Pendo event small
+      inputMethod: inputMethod,
+      messageLength: text.length,
+      messageIndex: log.querySelectorAll('.msg-user').length   // 1 = first message in this chat
+    });
     input.value = '';
     respondTo(text);
   }
@@ -190,19 +218,19 @@
   // ---------- 5. WIRE UP THE CLICKS ----------
   document.getElementById('chat-form').addEventListener('submit', function (event) {
     event.preventDefault();
-    send(input.value);
+    send(input.value, 'button');
   });
 
   // Enter sends; Shift+Enter makes a new line.
   input.addEventListener('keydown', function (event) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      send(input.value);
+      send(input.value, 'enter');
     }
   });
 
   document.querySelectorAll('#chat-suggestions .chip').forEach(function (chip) {
-    chip.addEventListener('click', function () { send(chip.textContent); });
+    chip.addEventListener('click', function () { send(chip.textContent, 'suggestion'); });
   });
 
   document.getElementById('agent-new-chat').addEventListener('click', newChat);

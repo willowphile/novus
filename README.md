@@ -54,7 +54,7 @@ The left nav has Login and the Activity Simulator on their own, then four collap
 | Guide Targeting | Duplicate DOM | Two copies of an element with the first hidden; Switch swaps them |
 | Guide Targeting | Widgets & Feedback | Floating help launcher, consent bar, star rating, "What's new" list, long scroll area |
 | Guide Targeting | Data Table | Sortable, reorderable and hideable columns, search, edit modal, identical icon-only row buttons |
-| Guide Targeting | AI Agent | Mock chat assistant. `agent.js` has an `onAgentEvent()` hook where tracking can be added |
+| Guide Targeting | AI Agent | Mock chat assistant. `agent.js` has an `onAgentEvent()` hook that sends message and reply track events to Pendo |
 
 ## Generating activity
 
