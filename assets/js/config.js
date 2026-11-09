@@ -10,7 +10,8 @@ window.TS_CONFIG = {
   // (the site works fine without it, you just won't see any data).
   // Also make sure the domain you host this site on is allowed in your
   // Pendo subscription's settings.
-  pendoApiKey: 'YOUR-PENDO-API-KEY',
+  // If you change this key, change it in assets/js/pendo-snippet.js too.
+  pendoApiKey: '5e02edf6-4111-42d4-9158-d8e18b9706d8',
 
   // The name shown at the top of the left nav.
   siteName: 'TS'
