@@ -1,0 +1,63 @@
+# Generates visitor activity on your hosted TS test site on a schedule.
+#
+# HOW IT WORKS: GitHub starts a fresh machine, installs Playwright, and runs
+# automation/run.js against your site's address. Nothing is stored on the
+# machine afterwards. It can also be started by hand from the Actions tab.
+#
+# BEFORE IT WORKS: in your repo, go to Settings > Pages and publish the site.
+# By default this uses the standard Pages address https://<owner>.github.io/<repo>/
+# If your site lives somewhere else, set a repository VARIABLE named SITE_URL
+# (Settings > Secrets and variables > Actions > Variables).
+name: Simulate activity
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'        # every 6 hours (UTC). Edit to taste: https://crontab.guru
+  workflow_dispatch:               # lets you press "Run workflow" by hand
+    inputs:
+      scenarios:
+        description: 'Scenario names, comma-separated, or "all"'
+        default: 'browse-session'
+      visitors:
+        description: 'How many fake visitors'
+        default: '3'
+      loops:
+        description: 'Times through for each visitor'
+        default: '1'
+      first:
+        description: 'First visitor # (change for brand-new visitors)'
+        default: '0'
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: automation/package-lock.json
+
+      - name: Install Playwright and Chromium
+        working-directory: automation
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Run the simulation
+        working-directory: automation
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+          # Scheduled runs have no inputs, so these fall back to the defaults.
+          SCENARIOS: ${{ inputs.scenarios || 'browse-session' }}
+          VISITORS: ${{ inputs.visitors || '3' }}
+          LOOPS: ${{ inputs.loops || '1' }}
+          FIRST: ${{ inputs.first || '0' }}
+        run: |
+          URL="${SITE_URL:-https://${OWNER}.github.io/${REPO}/}"
+          node run.js --url "$URL" --scenarios "$SCENARIOS" --visitors "$VISITORS" --loops "$LOOPS" --first "$FIRST" --speed fast

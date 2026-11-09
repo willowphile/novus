@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frame B</title>
+
+  <!-- Shown INSIDE an iframe on frames.html (see frame-a.html for notes). -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/session.js"></script>
+  <script src="assets/js/pendo-snippet.js"></script>
+</head>
+<body class="frame-body">
+  <h3>I'm in Frame B</h3>
+  <!-- This one has NO id, so it's harder to tag than the ones in Frame A -->
+  <button class="btn">Clicky</button>
+
+  <!-- A small bit of script: clicking the button below swaps its text -->
+  <button class="btn btn-outline" id="frame-b-toggle">Toggle me</button>
+  <script>
+    document.getElementById('frame-b-toggle').addEventListener('click', function () {
+      this.textContent = this.textContent === 'Toggle me' ? 'Toggled!' : 'Toggle me';
+    });
+  </script>
+</body>
+</html>

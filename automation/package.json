@@ -1,0 +1,12 @@
+{
+  "name": "ts-test-site-automation",
+  "private": true,
+  "description": "Unattended activity generator for the TS test site (uses Playwright).",
+  "scripts": {
+    "setup": "npx playwright install --with-deps chromium",
+    "simulate": "node run.js"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}

@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TS Training Site</title>
+
+  <!-- Styles for the whole site -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- SCRIPTS THAT MUST LOAD FIRST (order matters!):
+       config  -> settings (Pendo key)
+       theme   -> applies light/dark before the page paints
+       session -> reads/writes the logged-in user
+       pendo   -> installs Pendo using the settings + session above -->
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/session.js"></script>
+  <script src="assets/js/pendo-snippet.js"></script>
+</head>
+<body>
+
+<!-- =====================================================================
+     PAGE FRAME: left nav + (top banner over content).
+     The nav and banner are empty here; layout.js fills them in.
+     ===================================================================== -->
+<div class="app">
+
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <div class="main-col">
+    <header class="topbar" id="topbar"></header>
+
+    <main class="content">
+
+      <!-- ===============================================================
+           PAGE: LOGIN  (#login)
+           The form below saves the user to localStorage (see app.js).
+           =============================================================== -->
+      <section class="page" data-page="login">
+                  <div class="card" id="welcome" style="margin: 1rem 0">
+            <h1>Oh hai there!</h1>
+            <p class="muted">This site was frankensteined together using ideas from the EE site and real-world examples from support tickets. It is meant to be a standalone package that anyone can download, add to their own git repo, and customize for their own purposes.  The code here has been commented for ease of use/update/understanding. Check out <strong>About this site</strong> at the bottom left for a menu of features.</p>
+          </div>  
+        <div class="login-box">
+
+          
+          <div class="card">
+            <h3 class="page-title">Login</h3>
+            <p class="page-sub">Enter any details you like. Your visitor information is saved to your local storage and persists across pages. Using "log out" clears that storage and returns you to anonymous.</p>
+
+            <form id="login-form">
+              <div class="field">
+                <label for="login-username">Username (visitor ID)</label>
+                <input type="text" id="login-username" required placeholder="e.g. jane.doe@example.com">
+              </div>
+              <div class="field">
+                <label for="login-account">Account (account ID)</label>
+                <input type="text" id="login-account" required placeholder="e.g. acme-corp">
+              </div>
+              <div class="field">
+                <label for="login-role">Role (visitor metadata)</label>
+                <select id="login-role">
+                  <option value="learner">Learner</option>
+                  <option value="admin">Admin</option>
+                  <option value="manager">Manager</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="login-plan">Plan (account metadata)</label>
+                <select id="login-plan">
+                  <option value="free">Free</option>
+                  <option value="pro">Pro</option>
+                  <option value="enterprise">Enterprise</option>
+                </select>
+              </div>
+              <button type="submit" class="btn" id="login-submit">Log in</button>
+            </form>
+
+            <!-- Shows what is currently saved in localStorage (filled in by app.js) -->
+            <div class="session-box hidden" id="session-info"></div>
+          </div>
+
+          <!-- Shown only when no Pendo key has been set in assets/js/config.js (app.js hides it otherwise) -->
+          <div class="card hidden" id="no-key-notice" style="margin-top:1rem">
+            <h3>Pendo isn't turned on yet</h3>
+            <p class="muted">Open <code>assets/js/config.js</code>, paste your Pendo API key in place of <code>YOUR-PENDO-API-KEY</code>, and reload. Find the key in Pendo under Settings &gt; Subscription Settings &gt; App Details &gt; Install Settings. The domain this site is hosted on must also be allowed in your subscription settings.</p>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGE: TAGGING  (#tagging)
+           Lots of elements to practice tagging Features in Pendo.
+           Each section has a different challenge.
+           =============================================================== -->
+      <section class="page" data-page="tagging">
+        <h1 class="page-title">Tagging Practice</h1>
+        <p class="page-sub">Use the Pendo Designer to tag each element. Every section is a slightly different challenge.</p>
+
+        <!-- ---- 1. Easy: elements with ids ---- -->
+        <div class="section">
+          <h2>1. Easy mode: elements with ids</h2>
+          <p class="hint">Each of these has a unique id. Tag them by id.</p>
+          <div class="row">
+            <button class="btn" id="easy-save">Save</button>
+            <button class="btn" id="easy-cancel">Cancel</button>
+            <button class="btn btn-outline" id="easy-export">Export</button>
+            <a class="btn btn-outline" id="easy-link" href="#tagging">A link</a>
+            <button class="btn btn-icon" id="easy-icon" aria-label="Settings">⚙️</button>
+          </div>
+        </div>
+
+        <!-- ---- 2. Custom attribute ---- -->
+        <div class="section">
+          <h2>2. Custom attributes</h2>
+          <p class="hint">No ids here, but each has a <code>data-pendo-id</code> attribute. Check Pendo's data-attribute settings.</p>
+          <div class="row">
+            <button class="btn" data-pendo-id="ghost">👻 Ghost</button>
+            <button class="btn" data-pendo-id="gamepad">🎮 Gamepad</button>
+            <button class="btn" data-pendo-id="coffee">☕ Coffee</button>
+            <button class="btn" data-pendo-id="bug">🐛 Bug</button>
+          </div>
+        </div>
+
+        <!-- ---- 3. Identical elements ---- -->
+        <div class="section">
+          <h2>3. Identical twins</h2>
+          <p class="hint">Same classes, no ids. How do you tag just ONE of them? (Hint: look at their surroundings or their text.)</p>
+          <div class="grid">
+            <div class="card twin"><div class="pic">🐱</div><h3>We're the same</h3><button class="btn btn-small">Click me</button></div>
+            <div class="card twin"><div class="pic">🐱</div><h3>Except for</h3><button class="btn btn-small">Click me</button></div>
+            <div class="card twin"><div class="pic">🐱</div><h3>our headings</h3><button class="btn btn-small">Click me</button></div>
+          </div>
+        </div>
+
+        <!-- ---- 4. Dynamic ids ---- -->
+        <div class="section">
+          <h2>4. Dynamic ids</h2>
+          <p class="hint">These ids are random and change every time you refresh (tagging.js does this). Find another way to target them.</p>
+          <div class="row">
+            <button class="btn dynamic-id">Random 1</button>
+            <button class="btn dynamic-id">Random 2</button>
+            <button class="btn dynamic-id">Random 3</button>
+          </div>
+        </div>
+
+        <!-- ---- 5. Disappearing / appearing ---- -->
+        <div class="section">
+          <h2>5. Now you see me...</h2>
+          <p class="hint">Elements that appear, disappear or only show on hover.</p>
+          <div class="row">
+            <button class="btn" id="toggle-secret">Toggle secret</button>
+            <button class="btn btn-outline" id="vanishing-button">Click me and I vanish</button>
+            <span id="late-holder" class="muted">(a button appears here after 4 seconds)</span>
+            <div class="hover-menu">
+              <button class="btn btn-outline" id="hover-trigger">Hover over me ▾</button>
+              <div class="menu-items">
+                <button id="hover-item-1">First choice</button>
+                <button id="hover-item-2">Second choice</button>
+                <button id="hover-item-3">Third choice</button>
+              </div>
+            </div>
+          </div>
+          <div class="card hidden" id="secret-box" style="margin-top:1rem">
+            <h3>Secret!</h3>
+            <button class="btn btn-small" id="secret-button">Tag the button inside the secret</button>
+          </div>
+        </div>
+
+        <!-- ---- 6. Form elements ---- -->
+        <div class="section">
+          <h2>6. Form elements</h2>
+          <p class="hint">Inputs, checkboxes, radios and dropdowns.</p>
+          <div class="card">
+            <div class="field">
+              <label for="form-name">Name</label>
+              <input type="text" id="form-name" placeholder="Your name">
+            </div>
+            <div class="field">
+              <label><input type="checkbox" id="form-newsletter"> Subscribe to the newsletter</label>
+              <label><input type="checkbox" id="form-terms"> I agree to the terms</label>
+            </div>
+            <div class="field">
+              <label><input type="radio" name="size" value="s"> Small</label>
+              <label><input type="radio" name="size" value="m" checked> Medium</label>
+              <label><input type="radio" name="size" value="l"> Large</label>
+            </div>
+            <div class="field">
+              <label for="form-color">Favorite color</label>
+              <select id="form-color">
+                <option>Purple</option>
+                <option>Also purple</option>
+                <option>Violet</option>
+              </select>
+            </div>
+            <button class="btn" id="form-submit">Submit</button>
+          </div>
+        </div>
+
+        <!-- ---- 7. Tabs, accordions ---- -->
+        <div class="section">
+          <h2>7. Tabs and accordions</h2>
+          <p class="hint">Tabs swap content in place. The URL never changes.</p>
+          <div class="card">
+            <div class="tabs">
+              <button class="tab active" data-tab="one">Tab One</button>
+              <button class="tab" data-tab="two">Tab Two</button>
+              <button class="tab" data-tab="three">Tab Three</button>
+            </div>
+            <div class="tab-panel active" data-panel="one"><p>Panel one.</p><button class="btn btn-small" id="panel-one-btn">Button in one</button></div>
+            <div class="tab-panel" data-panel="two"><p>Panel two.</p><button class="btn btn-small" id="panel-two-btn">Button in two</button></div>
+            <div class="tab-panel" data-panel="three"><p>Panel three.</p><button class="btn btn-small" id="panel-three-btn">Button in three</button></div>
+          </div>
+          <div style="margin-top:1rem">
+            <details><summary>Accordion item A</summary><p>Hidden content A.</p><button class="btn btn-small">Button A</button></details>
+            <details><summary>Accordion item B</summary><p>Hidden content B.</p><button class="btn btn-small">Button B</button></details>
+          </div>
+        </div>
+
+        <!-- ---- 8. Counter ---- -->
+        <div class="section">
+          <h2>8. Click it a lot</h2>
+          <p class="hint">Good for checking that Pendo counts every click.</p>
+          <div class="row">
+            <button class="btn" id="counter-btn">Click counter</button>
+            <span>Clicks: <strong id="counter-value">0</strong></span>
+          </div>
+        </div>
+
+        <!-- ---- 9. Shadow DOM ---- -->
+        <div class="section">
+          <h2>9. Shadow DOM</h2>
+          <p class="hint">The button below lives inside a shadow root (tagging.js builds it).</p>
+          <div id="shadow-host"></div>
+        </div>
+
+        <!-- ---- 10. Track events ---- -->
+        <div class="section">
+          <h2>10. Track events (not clicks)</h2>
+          <p class="hint">These send custom <code>pendo.track()</code> events. Open the browser console to see them logged.</p>
+          <div class="grid">
+            <div class="card">
+              <h3>Search + Enter</h3>
+              <input type="search" id="search-input" placeholder="Type, then press Enter">
+            </div>
+            <div class="card">
+              <h3>Choose a flavor</h3>
+              <select id="flavor-select">
+                <option value="">Pick one...</option>
+                <option>Grape</option>
+                <option>Lavender</option>
+                <option>Plain (boring)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- 11. Repeated table rows ---- -->
+        <div class="section">
+          <h2>11. Repeated rows</h2>
+          <p class="hint">Every row has the same Edit / Delete buttons. Tag "Delete" for ONE row only, then try tagging it for ALL rows. (Delete really removes the row; refresh to get it back.)</p>
+          <table class="table" id="people-table">
+            <thead><tr><th>Name</th><th>Team</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td>Ada</td><td>Support</td><td><button class="btn btn-small row-edit">Edit</button> <button class="btn btn-small btn-outline row-delete">Delete</button></td></tr>
+              <tr><td>Grace</td><td>Engineering</td><td><button class="btn btn-small row-edit">Edit</button> <button class="btn btn-small btn-outline row-delete">Delete</button></td></tr>
+              <tr><td>Linus</td><td>Engineering</td><td><button class="btn btn-small row-edit">Edit</button> <button class="btn btn-small btn-outline row-delete">Delete</button></td></tr>
+              <tr><td>Margaret</td><td>Success</td><td><button class="btn btn-small row-edit">Edit</button> <button class="btn btn-small btn-outline row-delete">Delete</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ---- 12. Nested click targets ---- -->
+        <div class="section">
+          <h2>12. Click the child, tag the parent</h2>
+          <p class="hint">Each button contains smaller elements. Click different parts and watch the log below (tagging.js prints the element that was actually clicked). Pendo has to decide which one to tag.</p>
+          <div class="row">
+            <button class="btn" id="nested-btn"><span class="nested-icon">📦</span> <span class="nested-label"><strong>Ship</strong> it</span></button>
+            <div class="card nested-card" id="nested-card"><span>Whole card is clickable</span> <em>(even this part)</em></div>
+          </div>
+          <p class="muted" style="margin-top:.75rem">Last click: <code id="nested-log">nothing yet</code></p>
+        </div>
+
+        <!-- ---- 13. SVG and icon-only buttons ---- -->
+        <div class="section">
+          <h2>13. SVG and icon-only elements</h2>
+          <p class="hint">No text to match on. Clicks may land on the <code>&lt;svg&gt;</code> or the <code>&lt;path&gt;</code> inside it.</p>
+          <div class="row">
+            <button class="btn btn-icon" aria-label="Favorite">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.4-9.5 9-9.5 9z"/></svg>
+            </button>
+            <button class="btn btn-icon" aria-label="Star">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.8 1.6 7.1L12 17.8 5.7 21.5l1.6-7.1L2 9.6 9 9z"/></svg>
+            </button>
+            <button class="btn btn-icon" aria-label="Add">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <span class="muted">Clicking an emoji span also works:</span>
+            <span class="emoji-click" id="emoji-click" role="button" tabindex="0">🎉</span>
+          </div>
+        </div>
+
+        <!-- ---- 14. Links ---- -->
+        <div class="section">
+          <h2>14. Links</h2>
+          <p class="hint">Same look, different <code>href</code>s. Tag by href, text or position.</p>
+          <ul class="link-list">
+            <li><a href="#tagging">Link to this page</a></li>
+            <li><a href="#guides-modals">Link to Modals &amp; Banners</a></li>
+            <li><a href="frames.html">Link to a real other page</a></li>
+            <li><a href="https://www.pendo.io" target="_blank" rel="noopener">External link (new tab)</a></li>
+            <li><a href="#tagging" class="link-same">Same text</a> · <a href="#guides-targets" class="link-same">Same text</a></li>
+          </ul>
+        </div>
+
+        <!-- ---- 15. More inputs ---- -->
+        <div class="section">
+          <h2>15. More inputs</h2>
+          <p class="hint">Toggle switch, slider, date, textarea and file picker.</p>
+          <div class="card">
+            <div class="field">
+              <label class="switch"><input type="checkbox" id="switch-dark-alerts"> <span class="switch-track"></span> Enable alerts</label>
+            </div>
+            <div class="field">
+              <label for="slider">Volume: <strong id="slider-value">50</strong></label>
+              <input type="range" id="slider" min="0" max="100" value="50">
+            </div>
+            <div class="field"><label for="date-input">Pick a date</label><input type="date" id="date-input"></div>
+            <div class="field"><label for="notes">Notes</label><textarea id="notes" rows="3" placeholder="Type something..."></textarea></div>
+            <div class="field"><label for="file-input">Upload a file</label><input type="file" id="file-input"></div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGE: GUIDES - MODALS & BANNERS  (#guides-modals)
+           Things that pop up, so you have something to attach guides to.
+           =============================================================== -->
+      <section class="page" data-page="guides-modals">
+        <h1 class="page-title">Guides: Modals &amp; Banners</h1>
+        <p class="page-sub">Pop-ups and strips you can target with guides (or use to test guides appearing alongside them).</p>
+
+        <div class="section">
+          <h2>Regular modals</h2>
+          <p class="hint">Ordinary overlay modals built from a <code>&lt;div&gt;</code> and a z-index. Modal #1 has a Next button that swaps to modal #2 (and Back swaps back). They are never open at the same time.</p>
+          <button class="btn" id="open-modal-1">Open modal</button>
+        </div>
+
+        <div class="section">
+          <h2>Top-layer modal</h2>
+          <p class="hint">This one is a native <code>&lt;dialog&gt;</code> opened with <code>showModal()</code>. The browser puts it in the <em>top layer</em>, above everything on the page regardless of z-index, so it behaves differently from the regular modals when a guide tries to appear over it.</p>
+          <button class="btn" id="open-top-layer">Open top-layer modal</button>
+        </div>
+
+        <div class="section">
+          <h2>Banner slot</h2>
+          <p class="hint">An empty area at the top of a page is a classic guide target.</p>
+          <div class="banner-slot" id="banner-slot">
+            <div class="card hidden" id="sample-banner">
+              <strong>📣 Maintenance tonight at 10pm.</strong>
+              <button class="btn btn-small btn-outline" id="banner-dismiss">Dismiss</button>
+            </div>
+            <span class="muted">(banner area)</span>
+          </div>
+          <div class="row" style="margin-top:.75rem">
+            <button class="btn btn-outline" id="toggle-banner">Show / hide banner</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Toast</h2>
+          <button class="btn btn-outline" id="show-toast">Show a toast</button>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGE: GUIDES - TOOLTIP TARGETS  (#guides-targets)
+           A spread of elements in different positions so tooltips,
+           arrows and badges can point at them.
+           =============================================================== -->
+      <section class="page" data-page="guides-targets">
+        <h1 class="page-title">Guides: Tooltip Targets</h1>
+        <p class="page-sub">Elements spread around the page for tooltip guides to point at from different directions.</p>
+
+        <div class="section">
+          <div class="row" style="justify-content:space-between">
+            <button class="btn" id="target-top-left">Top left</button>
+            <span class="row">
+              <button class="btn btn-icon" id="bell-btn" aria-label="Notifications">🔔 <span class="badge" id="bell-count">3</span></button>
+              <button class="btn btn-outline btn-small" id="bell-reset">Reset badge</button>
+            </span>
+            <button class="btn" id="target-top-right">Top right</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="grid">
+            <div class="card"><h3>New feature</h3><p>A card with a heading <span class="badge">NEW</span></p><button class="btn btn-small" id="target-card-1">Try it</button></div>
+            <div class="card"><h3>Another card</h3><p>A card without a badge.</p><button class="btn btn-small" id="target-card-2">Try it</button></div>
+            <div class="card"><h3>Third card</h3><p>Nothing special here.</p><button class="btn btn-small" id="target-card-3">Try it</button></div>
+          </div>
+        </div>
+
+        <div class="section" style="margin-top:6rem">
+          <div class="row" style="justify-content:center">
+            <button class="btn" id="target-bottom">Lower down the page</button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGES: MULTI-STEP PROCESS  (#process-1, #process-2, #process-3)
+           A fake 3-step flow. Each step has its own URL, so it's a good
+           base for a walkthrough guide that crosses pages.
+           (Navigation is handled by the data-goto buttons in app.js.)
+           =============================================================== -->
+      <section class="page" data-page="process-1">
+        <h1 class="page-title">New Project Setup</h1>
+        <p class="page-sub">A pretend 3-step wizard.</p>
+        <div class="steps"><div class="step current">1. Details</div><div class="step">2. Settings</div><div class="step">3. Review</div></div>
+        <div class="card">
+          <div class="field"><label for="project-name">Project name</label><input type="text" id="project-name" placeholder="My project"></div>
+          <div class="field"><label for="project-desc">Description</label><textarea id="project-desc" rows="3"></textarea></div>
+          <button class="btn" id="step-1-next" data-goto="process-2">Next →</button>
+        </div>
+      </section>
+
+      <section class="page" data-page="process-2">
+        <h1 class="page-title">New Project Setup</h1>
+        <p class="page-sub">Step 2 of 3</p>
+        <div class="steps"><div class="step done">1. Details</div><div class="step current">2. Settings</div><div class="step">3. Review</div></div>
+        <div class="card">
+          <div class="field"><label><input type="checkbox" id="setting-notify" checked> Send me email updates</label></div>
+          <div class="field"><label for="setting-visibility">Visibility</label>
+            <select id="setting-visibility"><option>Private</option><option>Team</option><option>Public</option></select></div>
+          <div class="row">
+            <button class="btn btn-outline" id="step-2-back" data-goto="process-1">← Back</button>
+            <button class="btn" id="step-2-next" data-goto="process-3">Next →</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" data-page="process-3">
+        <h1 class="page-title">New Project Setup</h1>
+        <p class="page-sub">Step 3 of 3</p>
+        <div class="steps"><div class="step done">1. Details</div><div class="step done">2. Settings</div><div class="step current">3. Review</div></div>
+        <div class="card">
+          <p>Everything look good?</p>
+          <div class="row">
+            <button class="btn btn-outline" id="step-3-back" data-goto="process-2">← Back</button>
+            <button class="btn" id="process-finish">Finish</button>
+          </div>
+          <p class="hidden" id="process-done" style="margin-top:1rem"><strong>🎉 Project created!</strong>
+            <a href="frames.html">Now go see the frames page →</a></p>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGE: GUIDES - DUPLICATE DOM  (#guides-dupes)
+           Some real sites keep TWO copies of the same UI in the page (one
+           per theme, per user setting, or left over from sloppy SPA code)
+           and only show one. Guide targeting gets confused when the FIRST
+           match in the HTML is the invisible copy.
+
+           Every case below has two copies inside a ".dup-block":
+             - copy 1 comes first in the HTML and starts HIDDEN
+             - copy 2 comes second and starts VISIBLE
+           A "Switch" button (see guides.js, "DUPLICATE DOM") swaps them.
+           data-hide on each block says HOW the hidden copy is hidden.
+           =============================================================== -->
+      <section class="page" data-page="guides-dupes">
+        <h1 class="page-title">Guides: Duplicate DOM</h1>
+        <p class="page-sub">The same element exists twice, but only one copy is visible at a time. Target the visible one, then press Switch and see if the guide follows.</p>
+
+        <!-- ---- Case A: display: none, duplicate ids and classes ---- -->
+        <div class="section">
+          <h2>A. Per-theme copies (<code>display: none</code>)</h2>
+          <p class="hint">Both copies share the SAME id (<code>dup-save-a</code>), classes and text. Invalid HTML, but very common in the wild. The first one in the page is hidden.</p>
+          <div class="dup-block" data-hide="display">
+            <div class="dup-stack">
+              <div class="dup-copy" data-copy="1"><div class="card"><h3>Account settings</h3><p>Copy 1 · first in the DOM</p><button class="btn dup-save" id="dup-save-a">Save changes</button></div></div>
+              <div class="dup-copy active" data-copy="2"><div class="card"><h3>Account settings</h3><p>Copy 2 · second in the DOM</p><button class="btn dup-save" id="dup-save-a">Save changes</button></div></div>
+            </div>
+            <div class="row dup-controls">
+              <button class="btn btn-outline btn-small dup-toggle">Switch copies</button>
+              <span class="muted dup-status"></span>
+              <span class="muted dup-log"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- Case B: visibility: hidden, no ids ---- -->
+        <div class="section">
+          <h2>B. Per-setting copies (<code>visibility: hidden</code>)</h2>
+          <p class="hint">No ids at all. The hidden copy still takes up space (stacked in the same spot) so the page layout never shifts.</p>
+          <div class="dup-block" data-hide="visibility">
+            <div class="dup-stack">
+              <div class="dup-copy" data-copy="1"><div class="card"><h3>Invite a teammate</h3><p>Copy 1 · first in the DOM</p><button class="btn dup-save">Send invite</button></div></div>
+              <div class="dup-copy active" data-copy="2"><div class="card"><h3>Invite a teammate</h3><p>Copy 2 · second in the DOM</p><button class="btn dup-save">Send invite</button></div></div>
+            </div>
+            <div class="row dup-controls">
+              <button class="btn btn-outline btn-small dup-toggle">Switch copies</button>
+              <span class="muted dup-status"></span>
+              <span class="muted dup-log"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- Case C: opacity: 0 (sloppy SPA leftovers) ---- -->
+        <div class="section">
+          <h2>C. Leftover "previous view" (<code>opacity: 0</code>)</h2>
+          <p class="hint">Mimics an SPA that keeps the old view in the page and just fades it out. An <code>opacity: 0</code> element still occupies space and still exists for DOM queries, so it's the sneakiest one.</p>
+          <div class="dup-block" data-hide="opacity">
+            <div class="dup-stack">
+              <div class="dup-copy" data-copy="1"><div class="card"><h3>Export report</h3><p>Copy 1 · first in the DOM</p><button class="btn dup-save">Export</button></div></div>
+              <div class="dup-copy active" data-copy="2"><div class="card"><h3>Export report</h3><p>Copy 2 · second in the DOM</p><button class="btn dup-save">Export</button></div></div>
+            </div>
+            <div class="row dup-controls">
+              <button class="btn btn-outline btn-small dup-toggle">Switch copies</button>
+              <span class="muted dup-status"></span>
+              <span class="muted dup-log"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGE: GUIDES - WIDGETS  (#guides-widgets)
+           Things that float, stay put, collect feedback, or need scrolling.
+           =============================================================== -->
+      <section class="page" data-page="guides-widgets">
+        <h1 class="page-title">Guides: Widgets &amp; Feedback</h1>
+        <p class="page-sub">A floating help launcher, a consent bar, a rating form and a long page to scroll.</p>
+
+        <div class="section">
+          <h2>What's new</h2>
+          <p class="hint">A list with badges. Good for a "what's new" announcement guide.</p>
+          <div class="card">
+            <p><span class="badge">NEW</span> Dark mode is here. <a href="#guides-widgets" id="whats-new-1">Learn more</a></p>
+            <p><span class="badge">NEW</span> Faster exports. <a href="#guides-widgets" id="whats-new-2">Learn more</a></p>
+            <p><span class="badge">BETA</span> Shared dashboards. <a href="#guides-widgets" id="whats-new-3">Learn more</a></p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Rate your experience</h2>
+          <p class="hint">Click a star, add a comment, send it. A "thank you" replaces the form. Sends a <code>pendo.track</code> event.</p>
+          <div class="card" id="feedback-card">
+            <div class="stars" id="stars" role="radiogroup" aria-label="Rating">
+              <button class="star" data-value="1" aria-label="1 star">★</button>
+              <button class="star" data-value="2" aria-label="2 stars">★</button>
+              <button class="star" data-value="3" aria-label="3 stars">★</button>
+              <button class="star" data-value="4" aria-label="4 stars">★</button>
+              <button class="star" data-value="5" aria-label="5 stars">★</button>
+            </div>
+            <div class="field" style="margin-top:.75rem"><label for="feedback-text">Anything else?</label><textarea id="feedback-text" rows="2"></textarea></div>
+            <button class="btn" id="feedback-submit">Send feedback</button>
+            <p class="hidden" id="feedback-thanks"><strong>Thank you!</strong></p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Scroll down</h2>
+          <p class="hint">A tall spacer, then a target at the very bottom. For testing guides that wait for scrolling.</p>
+          <div class="scroll-spacer">⬇ keep scrolling ⬇</div>
+          <button class="btn" id="bottom-target">You made it</button>
+        </div>
+
+        <!-- Floating help launcher: fixed to the bottom-right corner of the window -->
+        <button class="launcher" id="launcher-btn" aria-label="Open help">?</button>
+        <div class="launcher-panel hidden" id="launcher-panel">
+          <h3>How can we help?</h3>
+          <button class="btn btn-outline btn-small" id="launcher-item-1">Getting started</button>
+          <button class="btn btn-outline btn-small" id="launcher-item-2">Keyboard shortcuts</button>
+          <button class="btn btn-outline btn-small" id="launcher-item-3">Contact us</button>
+        </div>
+
+        <!-- Consent-style bar: stuck to the bottom of the window until dismissed -->
+        <div class="consent-bar" id="consent-bar">
+          <span>We use cookies (not really). Pretend this is a consent banner.</span>
+          <button class="btn btn-small" id="consent-accept">Accept</button>
+          <button class="btn btn-small btn-outline" id="consent-decline">Decline</button>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGE: GUIDES - SCROLL TO REVEAL  (#guides-reveal)
+           Like Scroll Targets, but each target is NOT VISIBLE (per Pendo's
+           rules) until you scroll it into view. Pendo treats an element as
+           not visible if it has any of:
+               visibility: hidden   |   opacity: 0   |   display: none
+           Each case below uses one of them. The target is always in the
+           HTML; guides.js reveals it once its holder scrolls into view.
+           Each target sits inside a ".reveal-holder" that keeps its space
+           in the layout (a display:none element would otherwise take none).
+           =============================================================== -->
+      <section class="page" data-page="guides-reveal">
+        <h1 class="page-title">Guides: Scroll to Reveal</h1>
+        <p class="page-sub">The targets exist in the page but are hidden until you scroll to them. Can your guide wait for them to become visible?</p>
+
+        <div class="section">
+          <h2>How it works</h2>
+          <p class="hint">Scroll down. When a holder is fully on screen, its button switches from hidden to visible. The status text under each one shows the current state. "Reset all" hides them again.</p>
+          <button class="btn btn-outline" id="reveal-reset">Reset all</button>
+        </div>
+
+        <div class="scroll-filler" data-filler="25"></div>
+
+        <!-- ---- Case A: visibility: hidden ---- -->
+        <div class="section">
+          <h2>A. <code>visibility: hidden</code></h2>
+          <div class="reveal-holder">
+            <button class="btn reveal-target" id="reveal-visibility" data-hide="visibility">Revealed (was visibility: hidden)</button>
+          </div>
+          <p class="muted reveal-status" data-for="reveal-visibility"></p>
+        </div>
+
+        <div class="scroll-filler" data-filler="25"></div>
+
+        <!-- ---- Case B: opacity: 0 ---- -->
+        <div class="section">
+          <h2>B. <code>opacity: 0</code></h2>
+          <div class="reveal-holder">
+            <button class="btn reveal-target" id="reveal-opacity" data-hide="opacity">Revealed (was opacity: 0)</button>
+          </div>
+          <p class="muted reveal-status" data-for="reveal-opacity"></p>
+        </div>
+
+        <div class="scroll-filler" data-filler="25"></div>
+
+        <!-- ---- Case C: display: none ---- -->
+        <div class="section">
+          <h2>C. <code>display: none</code></h2>
+          <div class="reveal-holder">
+            <button class="btn reveal-target" id="reveal-display" data-hide="display">Revealed (was display: none)</button>
+          </div>
+          <p class="muted reveal-status" data-for="reveal-display"></p>
+        </div>
+
+        <div class="scroll-filler" data-filler="25"></div>
+
+        <!-- ---- Case D: hidden inside a scrolling box ---- -->
+        <div class="section">
+          <h2>D. Inside a scrolling box (<code>opacity: 0</code>)</h2>
+          <p class="hint">Revealed only when scrolled into view <em>inside the box</em>.</p>
+          <div class="scroll-box">
+            <div class="scroll-filler" data-filler="12"></div>
+            <div class="reveal-holder">
+              <button class="btn reveal-target" id="reveal-in-box" data-hide="opacity">Revealed in the box</button>
+            </div>
+          </div>
+          <p class="muted reveal-status" data-for="reveal-in-box"></p>
+        </div>
+
+        <div class="scroll-filler" data-filler="10"></div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGE: GUIDES - SCROLL TARGETS  (#guides-scroll)
+           For testing guides whose target is OUTSIDE the visible area and
+           only comes into view after scrolling. Three cases:
+             A. the whole page scrolls
+             B. a box inside the page scrolls
+             C. a strip scrolls sideways
+           The filler text is added by guides.js (look for "SCROLL FILLER").
+           =============================================================== -->
+      <section class="page" data-page="guides-scroll">
+        <h1 class="page-title">Guides: Scroll Targets</h1>
+        <p class="page-sub">Each case below hides its target out of view. Does your guide find it, scroll to it, and point at it correctly?</p>
+
+        <!-- ---- Case A: page-level scroll ---- -->
+        <div class="section">
+          <h2>A. Far down the page</h2>
+          <p class="hint">The target is a button at the very bottom of this page, thousands of pixels below the top. Scroll, or use the button.</p>
+          <div class="row">
+            <button class="btn btn-outline" id="scroll-jump-bottom">Jump to the bottom</button>
+          </div>
+        </div>
+
+        <!-- Filler: many paragraphs to push the target far away -->
+        <div class="scroll-filler" data-filler="40"></div>
+
+        <!-- ---- Case B: scrolling box ---- -->
+        <div class="section">
+          <h2>B. Inside a scrolling box</h2>
+          <p class="hint">This box has its own scrollbar. The target is at the bottom of the box, so the box itself has to scroll before the target is visible.</p>
+          <div class="scroll-box" id="scroll-box">
+            <div class="scroll-filler" data-filler="15"></div>
+            <button class="btn" id="scroll-box-target">Target at the bottom of the box</button>
+          </div>
+        </div>
+
+        <!-- ---- Case C: sideways scroll ---- -->
+        <div class="section">
+          <h2>C. Off to the right</h2>
+          <p class="hint">A strip that scrolls sideways. The target is far off the right edge.</p>
+          <div class="scroll-strip" id="scroll-strip">
+            <div class="strip-inner">
+              <div class="strip-filler">⬅ scroll sideways ➡</div>
+              <button class="btn" id="scroll-strip-target">Target at the far right</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- More filler so Case A's target really is far from everything else -->
+        <div class="scroll-filler" data-filler="40"></div>
+
+        <!-- ---- Case A target: the very bottom ---- -->
+        <div class="section">
+          <h2>The bottom of the page</h2>
+          <div class="row">
+            <button class="btn" id="scroll-bottom-target">Target at the bottom of the page</button>
+            <button class="btn btn-outline" id="scroll-jump-top">Back to top</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           MULTI-STEP PROCESS: CHECKOUT  (#checkout-shop, -cart, -shipping,
+           -payment, -review, -done)
+           A mock store. Everything here is fake: no real payments happen.
+           The product list, cart and step bar are drawn by checkout.js;
+           the cart is kept in localStorage so it survives a reload.
+           =============================================================== -->
+
+      <!-- Step 0: the shop -->
+      <section class="page" data-page="checkout-shop">
+        <div class="row" style="justify-content:space-between">
+          <div>
+            <h1 class="page-title">TS Shop</h1>
+            <p class="page-sub">Add a few things to your cart, then check out. Nothing here is real.</p>
+          </div>
+          <button class="btn btn-outline" id="shop-cart-btn" data-goto="checkout-cart">🛒 Cart (<span class="cart-count">0</span>)</button>
+        </div>
+        <!-- Product cards are added here by checkout.js -->
+        <div class="grid product-grid" id="product-grid"></div>
+      </section>
+
+      <!-- Step 1: the cart -->
+      <section class="page" data-page="checkout-cart">
+        <h1 class="page-title">Your Cart</h1>
+        <div class="steps" data-steps="cart"></div>
+        <div class="checkout-layout">
+          <div class="card" id="cart-items"></div>
+          <div class="card" id="cart-summary-box">
+            <h3>Order summary</h3>
+            <div class="field promo-field">
+              <label for="promo-input">Promo code</label>
+              <div class="row"><input type="text" id="promo-input" placeholder="Try PURPLE10"><button class="btn btn-outline btn-small" id="promo-apply">Apply</button></div>
+              <p class="muted" id="promo-msg"></p>
+            </div>
+            <div class="summary" data-summary></div>
+            <div class="row" style="margin-top:1rem">
+              <button class="btn btn-outline" id="cart-continue" data-goto="checkout-shop">← Keep shopping</button>
+              <button class="btn" id="cart-checkout">Checkout →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: shipping -->
+      <section class="page" data-page="checkout-shipping">
+        <h1 class="page-title">Shipping</h1>
+        <div class="steps" data-steps="shipping"></div>
+        <form class="card" id="shipping-form">
+          <div class="field"><label for="ship-name">Full name</label><input type="text" id="ship-name" required></div>
+          <div class="field"><label for="ship-address">Street address</label><input type="text" id="ship-address" required></div>
+          <div class="row">
+            <div class="field" style="flex:2"><label for="ship-city">City</label><input type="text" id="ship-city" required></div>
+            <div class="field" style="flex:1"><label for="ship-zip">ZIP</label><input type="text" id="ship-zip" required></div>
+          </div>
+          <div class="field">
+            <label>Shipping method</label>
+            <label><input type="radio" name="ship-method" value="standard" checked> Standard (3-5 days) · $5, free over $75</label>
+            <label><input type="radio" name="ship-method" value="express"> Express (1-2 days) · $15</label>
+          </div>
+          <div class="row">
+            <button type="button" class="btn btn-outline" id="ship-back" data-goto="checkout-cart">← Back</button>
+            <button type="submit" class="btn" id="ship-next">Continue to payment →</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Step 3: payment (fake form; nothing is saved or sent anywhere) -->
+      <section class="page" data-page="checkout-payment">
+        <h1 class="page-title">Payment</h1>
+        <div class="steps" data-steps="payment"></div>
+        <form class="card" id="payment-form">
+          <p class="muted"><strong>This is a mock form.</strong> Don't type a real card number. Any made-up digits will do, and nothing is stored or sent.</p>
+          <div class="field">
+            <label><input type="radio" name="pay-method" value="card" checked> Credit card</label>
+            <label><input type="radio" name="pay-method" value="invoice"> Pay by invoice</label>
+          </div>
+          <div id="card-fields">
+            <div class="field"><label for="pay-name">Name on card</label><input type="text" id="pay-name" required></div>
+            <div class="field"><label for="pay-number">Card number</label><input type="text" id="pay-number" inputmode="numeric" placeholder="0000 0000 0000 0000" required></div>
+            <div class="row">
+              <div class="field" style="flex:1"><label for="pay-exp">Expiry</label><input type="text" id="pay-exp" placeholder="MM/YY" required></div>
+              <div class="field" style="flex:1"><label for="pay-cvc">CVC</label><input type="text" id="pay-cvc" inputmode="numeric" placeholder="123" required></div>
+            </div>
+          </div>
+          <div class="row">
+            <button type="button" class="btn btn-outline" id="pay-back" data-goto="checkout-shipping">← Back</button>
+            <button type="submit" class="btn" id="pay-next">Review order →</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Step 4: review -->
+      <section class="page" data-page="checkout-review">
+        <h1 class="page-title">Review &amp; Place Order</h1>
+        <div class="steps" data-steps="review"></div>
+        <div class="checkout-layout">
+          <div class="card">
+            <h3>Items</h3>
+            <div id="review-items"></div>
+            <h3 style="margin-top:1rem">Ship to</h3>
+            <p id="review-address" class="muted"></p>
+          </div>
+          <div class="card">
+            <h3>Order summary</h3>
+            <div class="summary" data-summary></div>
+            <div class="row" style="margin-top:1rem">
+              <button class="btn btn-outline" id="review-back" data-goto="checkout-payment">← Back</button>
+              <button class="btn" id="place-order">Place order</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Done -->
+      <section class="page" data-page="checkout-done">
+        <div class="card" style="max-width:520px;margin:1rem auto;text-align:center">
+          <div style="font-size:3rem">🎉</div>
+          <h1 class="page-title">Thanks for your order!</h1>
+          <p>Order <strong id="done-order">NV-000000</strong> is on its way.</p>
+          <p class="muted">Total charged: <strong id="done-total">$0.00</strong></p>
+          <button class="btn" id="done-again" data-goto="checkout-shop">Shop again</button>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGE: AI AGENT  (#agent)
+           A pretend chat assistant. There's no real AI: agent.js picks a
+           canned reply by keyword and "types" it out. The markup is built
+           the way real agent UIs usually are (message list, input,
+           per-message actions) so there's plenty to tag.
+           =============================================================== -->
+      <section class="page" data-page="agent">
+        <h1 class="page-title">AI Agent</h1>
+        <p class="page-sub">A mock assistant to practice tagging a chat experience. Try "hello", "how do I tag a button?", or "what's a guide?".</p>
+
+        <div class="chat" id="agent-chat">
+          <div class="chat-header">
+            <div class="chat-avatar">✨</div>
+            <div>
+              <strong>fAIke Assistant</strong><br>
+              <span class="muted" id="agent-status">Online</span>
+            </div>
+            <span class="spacer" style="flex:1"></span>
+            <button class="btn btn-outline btn-small" id="agent-new-chat">New chat</button>
+          </div>
+
+          <!-- Messages are added here by agent.js -->
+          <div class="chat-log" id="chat-log" role="log" aria-live="polite"></div>
+
+          <!-- Click-to-send suggestions -->
+          <div class="chat-suggestions" id="chat-suggestions">
+            <button class="chip">Hello</button>
+            <button class="chip">How do I tag a button?</button>
+            <button class="chip">What's a guide?</button>
+            <button class="chip">Tell me a joke</button>
+          </div>
+
+          <form class="chat-form" id="chat-form">
+            <textarea id="chat-input" rows="1" placeholder="Ask the assistant anything..." aria-label="Message"></textarea>
+            <button type="submit" class="btn" id="chat-send">Send</button>
+          </form>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           PAGE: GUIDES - DATA TABLE  (#guides-table)
+           A data grid with: sortable columns (click a header), reorderable
+           columns (drag a header, or use the Columns menu), show/hide
+           columns, search, and per-row icon buttons. All drawn by table.js.
+           The three action buttons on every row are deliberately
+           identical: same class, no id, no text, just an icon.
+           =============================================================== -->
+      <section class="page" data-page="guides-table">
+        <h1 class="page-title">Guides: Data Table</h1>
+        <p class="page-sub">Click a header to sort. Drag headers to reorder them. Use <strong>Columns</strong> to show, hide or move columns. The icon buttons on each row are pencil (edit), copy and trash.</p>
+
+        <div class="row table-toolbar">
+          <input type="search" id="table-search" placeholder="Search rows..." aria-label="Search rows" style="max-width:260px">
+          <div class="menu-anchor">
+            <button class="btn btn-outline" id="columns-btn">Columns ▾</button>
+            <div class="popover hidden" id="columns-menu"></div>
+          </div>
+          <button class="btn btn-outline" id="table-reset">Reset table</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table data-table" id="data-table"></table>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           PAGE: ACTIVITY SIMULATOR  (#simulator)
+           Controls for simulator.js: pick scenarios, how many fake visitors,
+           how many times through, and how fast. Everything it does is real
+           clicking on the real pages, so Pendo records it like any visitor.
+           =============================================================== -->
+      <section class="page" data-page="simulator">
+        <h1 class="page-title">Activity Simulator</h1>
+        <p class="page-sub">Generate visitor activity automatically: clicks, page loads, form fills and logins. Keep this tab open while it runs. The scenarios live in <code>assets/js/scenarios.js</code>.</p>
+
+        <div class="card hidden" id="sim-no-key" style="margin-bottom:1rem">
+          <strong>Pendo isn't turned on yet</strong>
+          <span class="muted"> The simulator will still click around, but nothing will be recorded until you add your key in <code>assets/js/config.js</code>.</span>
+        </div>
+
+        <form class="card" id="sim-form" onsubmit="return false">
+          <h3>1. Scenarios</h3>
+          <div id="sim-scenarios" class="sim-options"></div>
+
+          <h3 style="margin-top:1.25rem">2. Options</h3>
+          <div class="field">
+            <label><input type="radio" name="sim-mode" value="generate" checked> Generate fake visitors (logs each one in and out with the real login form, names start with <code>sim-</code>)</label>
+            <label><input type="radio" name="sim-mode" value="current"> Just use the visitor I'm logged in as</label>
+          </div>
+          <div class="row">
+            <div class="field"><label for="sim-visitors">Visitors</label><input type="number" id="sim-visitors" min="1" max="100" value="3" style="width:6rem"></div>
+            <div class="field"><label for="sim-loops">Times through</label><input type="number" id="sim-loops" min="1" max="100" value="1" style="width:6rem"></div>
+            <div class="field"><label for="sim-first">First visitor #</label><input type="number" id="sim-first" min="0" value="0" style="width:6rem"></div>
+            <div class="field"><label for="sim-speed">Speed</label>
+              <select id="sim-speed"><option value="fast">Fast</option><option value="normal" selected>Normal</option><option value="slow">Slow</option></select></div>
+          </div>
+          <p class="muted">"First visitor #" picks which fake people are used. The same numbers always give the same people, so raise it to get brand-new visitors.</p>
+
+          <div class="row">
+            <button type="button" class="btn" id="sim-start">▶ Start</button>
+            <button type="button" class="btn btn-outline" id="sim-stop" disabled>■ Stop</button>
+            <button type="button" class="btn btn-outline" id="sim-clear">Clear log</button>
+            <strong id="sim-status">Not running.</strong>
+          </div>
+        </form>
+
+        <div class="card" style="margin-top:1rem">
+          <h3>Log</h3>
+          <pre class="sim-log" id="sim-log"></pre>
+        </div>
+
+        <div class="card" style="margin-top:1rem">
+          <h3>Share or automate this run</h3>
+          <p class="muted">A link that starts this run by itself when opened, and the matching command for the unattended runner in the <code>automation</code> folder.</p>
+          <div class="field"><label for="sim-link">Link</label>
+            <div class="row"><input type="text" id="sim-link" readonly style="flex:1"><button type="button" class="btn btn-outline btn-small" data-copy-from="sim-link">Copy</button></div></div>
+          <div class="field"><label for="sim-cli">Command (run from the automation folder)</label>
+            <div class="row"><input type="text" id="sim-cli" readonly style="flex:1"><button type="button" class="btn btn-outline btn-small" data-copy-from="sim-cli">Copy</button></div></div>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           PAGE: ABOUT THIS SITE  (#about)
+           The list of pages below is built by about.js from NAV_ITEMS in
+           layout.js, so it always matches the left nav. The "Under the hood"
+           part is plain text you can edit here.
+           =============================================================== -->
+      <section class="page" data-page="about">
+        <h1 class="page-title">About this site</h1>
+        <p class="page-sub">This is a practice site for learning Pendo tagging and guides. Everything on it is fake: there is no real account, store or AI. Pick a page below to explore. I dare you to use the konami code somewhere.</p>
+
+        <!-- Filled in by about.js: one card per page, grouped like the left nav -->
+        <div id="about-content"></div>
+
+        <div class="about-section">
+          <h2>Under the hood</h2>
+          <div class="card">
+            <ul>
+              <li><strong>Setup:</strong> paste your Pendo API key into <code>assets/js/config.js</code>. The domain you host the site on must also be allowed in your Pendo subscription.</li>
+              <li><strong>Visitor identity:</strong> whoever "logs in" is sent to Pendo as the visitor (username) and account, with role and plan as metadata.</li>
+              <li><strong>Light and dark mode:</strong> use the toggle in the top banner. Your choice is remembered.</li>
+              <li><strong>Generating activity:</strong> use the Activity Simulator in this site, or the unattended runner in the <code>automation</code> folder (it can run on a schedule with GitHub Actions). Fake visitors are named <code>sim-...@example.com</code> so they are easy to filter out.</li>
+              <li><strong>Adding things:</strong> new pages, scenarios and styles are explained in the project's <code>README.md</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Edit-row modal for the Data Table (a regular overlay modal) -->
+<div class="modal-overlay" id="row-modal">
+  <div class="modal" role="dialog" aria-labelledby="row-modal-title">
+    <button class="modal-x" id="row-modal-x" aria-label="Close">×</button>
+    <h2 id="row-modal-title">Edit row</h2>
+    <form id="row-form">
+      <div class="field"><label for="edit-name">Name</label><input type="text" id="edit-name" required></div>
+      <div class="field"><label for="edit-team">Team</label>
+        <select id="edit-team"><option>Support</option><option>Engineering</option><option>Success</option><option>Design</option></select></div>
+      <div class="field"><label for="edit-role">Role</label><input type="text" id="edit-role"></div>
+      <div class="field"><label for="edit-status">Status</label>
+        <select id="edit-status"><option>Active</option><option>Away</option><option>Offline</option></select></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="row-cancel">Cancel</button>
+        <button type="submit" class="btn" id="row-save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- =====================================================================
+     MODALS used by the Guides page. They are hidden until JS adds
+     the "open" class (see guides.js). They sit outside the pages so they
+     can overlay everything.
+     ===================================================================== -->
+<div class="modal-overlay" id="modal-1">
+  <div class="modal" role="dialog" aria-labelledby="modal-1-title">
+    <button class="modal-x" id="modal-1-x" aria-label="Close">×</button>
+    <h2 id="modal-1-title">Modal #1</h2>
+    <p>This is the first modal. It can open another one on top of it.</p>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="modal-1-close">Close</button>
+      <button class="btn" id="modal-1-next">Next</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-2">
+  <div class="modal" role="dialog" aria-labelledby="modal-2-title">
+    <h2 id="modal-2-title">Modal #2</h2>
+    <p>Are you sure you want to continue?</p>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="modal-2-back">Back</button>
+      <button class="btn btn-outline" id="modal-2-cancel">Cancel</button>
+      <button class="btn" id="modal-2-confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- A native <dialog>. Calling .showModal() on it (see guides.js) puts it in the
+     browser's "top layer", which sits above all other page content. -->
+<dialog class="top-dialog" id="top-layer-modal" aria-labelledby="top-layer-title">
+  <button class="modal-x" id="top-layer-x" aria-label="Close">×</button>
+  <h2 id="top-layer-title">Top-layer modal</h2>
+  <p>I'm a native <code>&lt;dialog&gt;</code>, so I render in the top layer.</p>
+  <div class="modal-footer">
+    <button class="btn btn-outline" id="top-layer-close">Close</button>
+    <button class="btn" id="top-layer-ok">Got it</button>
+  </div>
+</dialog>
+
+
+<!-- =====================================================================
+     SCRIPTS (at the bottom so the HTML above exists when they run).
+     Order: layout builds nav/banner, then app.js (router + login),
+     then the page-specific scripts.
+     ===================================================================== -->
+<script src="assets/js/layout.js"></script>
+<script src="assets/js/about.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/tagging.js"></script>
+<script src="assets/js/guides.js"></script>
+<script src="assets/js/checkout.js"></script>
+<script src="assets/js/agent.js"></script>
+<script src="assets/js/table.js"></script>
+<script src="assets/js/scenarios.js"></script>
+<script src="assets/js/simulator.js"></script>
+</body>
+</html>

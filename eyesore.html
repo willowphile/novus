@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>★~* MySpace Vibes *~★</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* ✨ Intentional eyesore: clashing colors, glittery chaos, deprecated vibes */
+
+    /* Tiled glitter-ish background using animated gradients */
+    body {
+      margin: 0;
+      background-image:
+        repeating-linear-gradient(45deg, #ff00ff, #ff00ff 10px, #00ffff 10px, #00ffff 20px),
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.6), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.6), transparent 40%);
+      background-blend-mode: screen, normal, normal;
+      animation: bgflash 2.2s linear infinite;
+      cursor: crosshair;
+    }
+
+    @keyframes bgflash {
+      0% { filter: hue-rotate(0deg) saturate(180%); }
+      50% { filter: hue-rotate(180deg) saturate(250%); }
+      100% { filter: hue-rotate(360deg) saturate(180%); }
+    }
+
+    /* Page container in the worst possible way: fixed width, tables, and shadows on everything */
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      box-shadow: 0 0 40px hotpink, 0 0 80px cyan inset;
+      background: rgba(0,0,0,0.6);
+      border: 10px outset fuchsia;
+    }
+
+    /* Header with marquee and blinking text */
+    .header {
+      background: linear-gradient(90deg, #ff00ff, #ffff00, #00ffff);
+      padding: 10px;
+      border-bottom: 6px ridge #00ffff;
+      color: #000;
+      text-align: center;
+      font-family: "Comic Sans MS", "Papyrus", cursive;
+      text-shadow: 2px 2px #fff;
+    }
+
+    .blink {
+      animation: blink 0.6s steps(2, start) infinite;
+    }
+    @keyframes blink { to { visibility: hidden; } }
+
+    .layout {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+    .sidebar, .content {
+      display: table-cell;
+      vertical-align: top;
+    }
+    .sidebar {
+      width: 33%;
+      background: repeating-linear-gradient(135deg, #222, #222 8px, #333 8px, #333 16px);
+      border-right: 8px groove #ff00ff;
+      padding: 12px;
+      color: #0ff;
+      font-family: "Courier New", monospace;
+    }
+    .content {
+      padding: 14px;
+      color: #fff;
+      font-family: "Times New Roman", serif;
+    }
+
+    /* Glitter text hack: animated background clip */
+    .glitter-text {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: repeating-linear-gradient(45deg, #fff 0 8px, #ffd700 8px 16px, #ff69b4 16px 24px, #0ff 24px 32px);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 1.4s linear infinite;
+      text-transform: uppercase;
+    }
+    @keyframes shimmer { to { background-position: 120px 0; } }
+
+    /* Profile photo with sparkly border */
+    .photo {
+      width: 100%;
+      border: 12px dashed #ffff00;
+      box-shadow: 0 0 30px #ff69b4, 0 0 60px #0ff inset;
+      transform: rotate(-2deg);
+    }
+
+    /* Link styles straight from 2006 */
+    a:link { color: #00ffff; text-decoration: underline wavy hotpink; }
+    a:visited { color: #ff00ff; }
+    a:hover { background: #ffff00; color: #000; cursor: help; }
+
+    /* Badges and buttons */
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .badge {
+      font: 700 12px/1 "Verdana";
+      padding: 6px 10px;
+      border: 3px double #fff;
+      box-shadow: 0 0 12px #0ff;
+      background: linear-gradient(180deg, #ff00ff, #00ffff);
+      color: #000;
+      transform: skewX(-10deg);
+    }
+
+    /* Guestbook + Counter box */
+    .widget {
+      margin: 20px 0;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 6px ridge #ffff00;
+      box-shadow: 0 0 20px #ff00ff inset;
+    }
+
+    /* Tiny footer */
+    .footer {
+      padding: 10px;
+      text-align: center;
+      background: linear-gradient(90deg, #00ffff, #ff69b4);
+      color: #000;
+      font-family: Tahoma, sans-serif;
+      border-top: 6px groove #ff00ff;
+    }
+
+    /* Cursor trail sparkles */
+    .sparkle {
+      position: fixed; pointer-events: none; width: 12px; height: 12px; border-radius: 50%;
+      box-shadow: 0 0 10px 2px #fff; opacity: 0.9;
+      mix-blend-mode: screen;
+      animation: pop 600ms ease-out forwards;
+    }
+    @keyframes pop {
+      0% { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+    }
+
+    /* Snowfall / glitter rain */
+    .flake { position: fixed; top: -10px; font-size: 12px; animation: fall linear infinite; }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+    /* Iframe content box (because why not) */
+    .player-box { border: 10px outset #00ffff; box-shadow: 0 0 20px #ffff00; margin: 10px 0; }
+
+    /* Accessibility note (intentionally bad contrast): DO NOT use in real sites */
+  </style>
+
+  <!-- EASTER EGG PAGE. Found by entering the Konami code on any page (see layout.js).
+       It is NOT in the nav or the About page on purpose.
+       It loads the same Pendo setup as every other page so it can be tagged too. -->
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/session.js"></script>
+  <script src="assets/js/pendo-snippet.js"></script>
+</head>
+<body>
+  <!-- The original autoplaying Beethoven track was removed: its file no longer exists
+       online, and browsers block autoplay audio anyway. Sorry, not sorry. -->
+
+  <div class="page">
+    <div class="header">
+      <marquee scrollamount="12" direction="left">WELCOME TO MY CRIB ✨ WELCOME TO MY CRIB ✨ WELCOME TO MY CRIB ✨</marquee>
+      <div class="glitter-text">Alisyn's Site</div>
+      <div class="blink">★ Add me! Comment! Subscribe! ★</div>
+      <div><a href="index.html">« escape to safety »</a></div>
+    </div>
+
+    <div class="layout">
+      <div class="sidebar">
+        <center>
+          <img class="photo" alt="Blurry webcam selfie" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22360%22%20height%3D%22240%22%20viewBox%3D%220%200%20360%20240%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff69b4%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2300ffff%22/%3E%3C/linearGradient%3E%3Cfilter%20id%3D%22b%22%3E%3CfeGaussianBlur%20stdDeviation%3D%223%22/%3E%3C/filter%3E%3C/defs%3E%3Crect%20width%3D%22360%22%20height%3D%22240%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20filter%3D%22url%28%23b%29%22%3E%3Ccircle%20cx%3D%22180%22%20cy%3D%22110%22%20r%3D%2262%22%20fill%3D%22%23ffd9b3%22/%3E%3Ccircle%20cx%3D%22160%22%20cy%3D%22100%22%20r%3D%227%22%20fill%3D%22%23222%22/%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22100%22%20r%3D%227%22%20fill%3D%22%23222%22/%3E%3Cpath%20d%3D%22M150%20130%20Q180%20160%20210%20130%22%20stroke%3D%22%23222%22%20stroke-width%3D%226%22%20fill%3D%22none%22/%3E%3C/g%3E%3Ctext%20x%3D%22180%22%20y%3D%22222%22%20font-family%3D%22Comic%20Sans%20MS%2C%20cursive%22%20font-size%3D%2222%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20stroke%3D%22%23000%22%20stroke-width%3D%221%22%3E~%2A%20me%2C%204%20real%20%2A~%3C/text%3E%3C/svg%3E" />
+          <p><font size="+2">Mood:</font> <b>~* Randomly Sparkly *~</b></p>
+          <p><font color="#ffff00">Status:</font> <i>BRB, coding glitter...</i></p>
+        </center>
+
+        <div class="widget">
+          <b>Top 8 (totally real friends):</b>
+          <ol>
+            <li><a href="#">SparkleQueen92</a></li>
+            <li><a href="#">xX_CyberPunk_Xx</a></li>
+            <li><a href="#">HTMLHooligan</a></li>
+            <li><a href="#">Marquee4Life</a></li>
+            <li><a href="#">RGBoblins</a></li>
+            <li><a href="#">C0m1cSansStan</a></li>
+            <li><a href="#">BlinkTag</a></li>
+            <li><a href="#">TableLayout4Ever</a></li>
+          </ol>
+        </div>
+
+        <div class="widget">
+          <b>Hit Counter:</b>
+          <pre>
+▒▒ 0001337 ▒▒
+          </pre>
+        </div>
+
+        <div class="badges">
+          <div class="badge">Best Viewed in IE6</div>
+          <div class="badge">Under Construction</div>
+          <div class="badge">No CSS (lol)</div>
+          <div class="badge">Gif Aficionado</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <h1>About Me</h1>
+        <p>
+          Heyyyy! I'm a <b>✹ Glitter Coder ✹</b> who loves <span style="background: #ff0; color:#000;">marquees</span>,
+          <span style="background:#0ff; color:#000;">table layouts</span>, and <span style="background:#f0f; color:#000;">autoplay music</span>.
+        </p>
+
+        <h2>Stuff I Like</h2>
+        <ul>
+          <li>Making things blink for no reason</li>
+          <li>Cursor trails that follow your soul</li>
+          <li>Backgrounds that fight your retina</li>
+        </ul>
+
+        <div class="player-box">
+          <iframe width="100%" height="220" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0" title="Totally 2000s Video" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+
+        <h2>Guestbook</h2>
+        <form class="widget" onsubmit="alert('Thx 4 ur glitter!!!'); return false;">
+          <label>Nickname:</label>
+          <input type="text" placeholder="urName_420" />
+          <label>Message:</label>
+          <textarea rows="4" placeholder="leave a msg ✨"></textarea>
+          <button type="submit">Sign My Book!!!</button>
+        </form>
+
+        <h2>Blinking Announcements</h2>
+        <p class="blink">OMG new layout dropping soon!!! (probably worse)</p>
+
+        <h2>Latest Blog</h2>
+        <marquee behavior="alternate" scrollamount="8">I <3 CSS that hurts (｡◕‿◕｡)</marquee>
+      </div>
+    </div>
+
+    <div class="footer">
+      © 2006-2025 Alisyn | Powered by Friendship &amp; Glitter | <a href="#">Report a Vibe</a> | <a href="index.html">Escape to safety</a>
+    </div>
+  </div>
+
+  <script>
+    // Cursor sparkle trail
+    document.addEventListener('pointermove', (e) => {
+      for (let i = 0; i < 2; i++) {
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        const size = 6 + Math.random() * 12;
+        s.style.width = size + 'px';
+        s.style.height = size + 'px';
+        s.style.left = (e.clientX - size/2) + 'px';
+        s.style.top = (e.clientY - size/2) + 'px';
+        s.style.background = `radial-gradient(circle, white, ${Math.random() > 0.5 ? '#ff69b4' : '#00ffff'})`;
+        const dx = (Math.random() - 0.5) * 60 + 'px';
+        const dy = (Math.random() - 0.2) * 80 + 'px';
+        s.style.setProperty('--dx', dx);
+        s.style.setProperty('--dy', dy);
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 700);
+      }
+    });
+
+    // Glitter rain (like falling snow)
+    function makeFlake() {
+      const f = document.createElement('div');
+      f.className = 'flake';
+      f.textContent = Math.random() > 0.5 ? '✦' : '✧';
+      f.style.left = Math.floor(Math.random() * 100) + 'vw';
+      f.style.animationDuration = (5 + Math.random() * 6) + 's';
+      document.body.appendChild(f);
+      setTimeout(() => f.remove(), 12000);
+    }
+    setInterval(makeFlake, 300);
+  </script>
+</body>
+</html>

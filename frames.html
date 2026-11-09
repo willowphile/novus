@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frames</title>
+
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Same load-first scripts as index.html (see the comment there). -->
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/session.js"></script>
+  <script src="assets/js/pendo-snippet.js"></script>
+</head>
+<!-- data-require-login: layout.js sends you to the login page if you're logged out -->
+<body data-require-login>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <div class="main-col">
+    <header class="topbar" id="topbar"></header>
+
+    <main class="content">
+      <h1 class="page-title">Frames</h1>
+      <p class="page-sub">
+        This is a real, separate page (<code>frames.html</code>), not part of the single-page app.
+        The two dashed boxes below are <code>&lt;iframe&gt;</code>s, each loading its own HTML file.
+        Pendo has to be installed in each frame separately.
+      </p>
+
+      <div class="section">
+        <h2>Two frames and one regular button</h2>
+        <p class="hint">Can you tag a button in each frame, and the one that is NOT in a frame?</p>
+
+        <div class="frame-row">
+          <!-- Each iframe loads another HTML file into a box on this page -->
+          <div class="frame-box">
+            <h3>Frame A</h3>
+            <iframe src="frame-a.html" title="Frame A"></iframe>
+          </div>
+          <div class="frame-box">
+            <h3>Frame B</h3>
+            <iframe src="frame-b.html" title="Frame B"></iframe>
+          </div>
+        </div>
+
+        <!-- This button is on the main page, outside the frames -->
+        <div class="row" style="margin-top:1.5rem">
+          <button class="btn" id="not-a-frame">Don't forget about me!</button>
+          <a class="btn btn-outline" href="index.html#tagging">← Back to the single-page app</a>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="assets/js/layout.js"></script>
+<!-- The simulator is loaded here too so a running simulation can continue on this page -->
+<script src="assets/js/scenarios.js"></script>
+<script src="assets/js/simulator.js"></script>
+</body>
+</html>
