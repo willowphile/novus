@@ -216,6 +216,22 @@
     state.step = 0;
   }
 
+  // Tell Pendo a run has finished all its loops. Called once, at the moment
+  // nextJob() marks the run finished (the loop stops right after), so it
+  // can't fire twice for the same run.
+  function trackRunFinished(state) {
+    if (!(window.pendo && pendo.track)) return;
+    pendo.track('simulator_run_finished', {
+      scenarios: state.opts.scenarios.join(',').slice(0, 200),
+      mode: state.opts.mode,
+      visitors: state.opts.visitors,
+      loops: state.opts.loops,
+      speed: state.opts.speed,
+      done: state.done,
+      failed: state.failed
+    });
+  }
+
   async function runLoop() {
     if (running) return;                                    // never run two loops at once
     running = true;
@@ -227,7 +243,10 @@
       if (state.step >= state.steps.length) {               // this visitor is finished
         update(nextJob);
         state = load();
-        if (state.finished) log('Run finished: ' + state.done + ' steps done, ' + state.failed + ' skipped');
+        if (state.finished) {
+          log('Run finished: ' + state.done + ' steps done, ' + state.failed + ' skipped');
+          trackRunFinished(state);
+        }
         continue;
       }
       var step = state.steps[state.step];

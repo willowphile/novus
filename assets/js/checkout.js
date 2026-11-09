@@ -199,6 +199,20 @@
       msg.textContent = code ? '✖ Not a valid code' : '';
     }
     drawSummary();
+
+    // Tell Pendo which code was tried and whether it worked. A Feature click
+    // on the Apply button can't see the code or the result. An empty box
+    // isn't a real attempt, so it isn't tracked.
+    if (code) {
+      var t = totals();
+      track('promo_code_applied', {
+        code: code.slice(0, 50),
+        valid: !!PROMO_CODES[code],
+        discountRate: PROMO_CODES[code] || 0,
+        discount: t.discount,
+        subtotal: t.subtotal
+      });
+    }
   });
 
   // "Checkout" only works with something in the cart.

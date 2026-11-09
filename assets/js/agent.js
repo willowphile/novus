@@ -31,37 +31,39 @@
   // Checked top to bottom; the first "match" found in your message wins.
   // steps   = optional tool-step lines shown before the answer
   // sources = optional links shown under the answer
+  // topic   = a short name for the reply, sent to Pendo as matchedTopic
   var REPLIES = [
-    { match: /\b(hello|hi|hey)\b/i,
+    { match: /\b(hello|hi|hey)\b/i, topic: 'greeting',
       text: "Hi there! I'm the fAIke Assistant. I can answer questions about tagging, guides and this site.",
       steps: [], sources: [] },
 
-    { match: /tag|feature|button|click/i,
+    { match: /tag|feature|button|click/i, topic: 'tagging',
       text: "To tag a feature, open the Pendo Designer, choose Tag Feature, then click the element on the page. Try the Page Elements section for practice, and watch out for dynamic ids and identical twins.",
       steps: ['Searching the knowledge base…'],
       sources: [{ label: 'Page Elements', href: '#tagging' }, { label: 'Data Table', href: '#guides-table' }] },
 
-    { match: /guide|modal|tooltip|walkthrough/i,
+    { match: /guide|modal|tooltip|walkthrough/i, topic: 'guides',
       text: "Guides are in-app messages. You target them at a page or an element. The Guide Targeting section has pages for tooltips, scrolling targets, hidden elements and duplicated DOM.",
       steps: ['Searching the knowledge base…', 'Reading 3 articles…'],
       sources: [{ label: 'Tooltip Targets', href: '#guides-targets' }, { label: 'Scroll to Reveal', href: '#guides-reveal' }] },
 
-    { match: /cart|checkout|order|shop/i,
+    { match: /cart|checkout|order|shop/i, topic: 'checkout',
       text: "There's a mock shop in Multi-step Processes. Add items to the cart, apply the promo code PURPLE10, and run through checkout. Nothing is charged.",
       steps: ['Looking up the checkout flow…'],
       sources: [{ label: 'Checkout', href: '#checkout-shop' }] },
 
-    { match: /joke|funny/i,
+    { match: /joke|funny/i, topic: 'joke',
       text: "Why did the guide cross the page? To get to the other tooltip.",
       steps: [], sources: [] },
 
-    { match: /thank/i,
+    { match: /thank/i, topic: 'thanks',
       text: "You're welcome! Anything else I can help with?",
       steps: [], sources: [] }
   ];
 
   // Used when nothing above matched.
   var FALLBACK = {
+    topic: 'fallback',
     text: "I'm just a mock agent, so I only know a few topics: tagging, guides, the shop, and jokes. Try asking about one of those.",
     steps: [], sources: []
   };
@@ -257,14 +259,14 @@
   // ---------- 5. WIRE UP THE CLICKS ----------
   document.getElementById('chat-form').addEventListener('submit', function (event) {
     event.preventDefault();
-    send(input.value);
+    send(input.value, 'button');
   });
 
   // Enter sends; Shift+Enter makes a new line.
   input.addEventListener('keydown', function (event) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      send(input.value);
+      send(input.value, 'enter');
     }
   });
 
