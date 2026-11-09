@@ -13,7 +13,7 @@ window.TS_CONFIG = {
   pendoApiKey: '5e02edf6-4111-42d4-9158-d8e18b9706d8',
 
   // The name shown at the top of the left nav.
-  siteName: 'TS'
+  siteName: "A Novice's Novus Nexus"
 };
 
 // true once a real key has been pasted in above (other scripts check this)
