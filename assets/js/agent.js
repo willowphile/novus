@@ -19,10 +19,10 @@
         </div>
      </div>
 
-   WHERE TO HOOK IN AGENT TRACKING: look for onAgentEvent() below. It is
-   called for every send, reply and feedback click. It logs everything to
-   the console, and sends "send" and "reply" to Pendo as track events
-   (agent_message_sent and agent_reply_completed).
+   AGENT TRACKING: look for onAgentEvent() below. It is called for every
+   send, reply, copy and feedback click. It logs to the console, and passes
+   messages, replies and thumbs up/down to Pendo with pendo.trackAgent()
+   (only when Pendo has loaded, so it is safe without an API key).
    ===================================================================== */
 
 (function () {
@@ -72,19 +72,74 @@
 
 
   // ---------- 2. TRACKING HOOK ----------
-  // Called with an event name and some details. Every event is logged to
-  // the console. The ones listed in PENDO_EVENTS are also sent to Pendo as
-  // track events, under the Pendo name shown (copy/feedback are console only).
-  var PENDO_EVENTS = {
-    send:  'agent_message_sent',      // a message really went to the agent
-    reply: 'agent_reply_completed'    // the agent finished typing its reply
-  };
+  // Called with an event name and some details. Logs everything to the
+  // console, and sends the chat events to Pendo's agent tracking.
+
+  // The id Pendo uses for this agent (the fAIke Assistant).
+  var PENDO_AGENT_ID = '87R1A2Ry1gVmkIU8Hjn_spHL5Vc';
+
+  // One id per conversation. A new one is made every time the chat starts
+  // over (page load or the "New chat" button). See newChat() below.
+  var conversationId = null;
+
+  // Makes a new random id. Uses crypto.randomUUID() when the browser has it,
+  // otherwise falls back to the time plus a random number.
+  function makeId() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID();
+    }
+    return 'chat_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
+  }
+
+  // The data-message-id on each message (m1, m2, ...) starts over with every
+  // new chat, so we add the conversation id in front to make it unique.
+  // Replies and the thumbs clicks on them use the same id, so Pendo can tie
+  // the feedback to the reply it was about.
+  function pendoMessageId(messageId) {
+    return conversationId + '-' + messageId;
+  }
+
+  // Sends one event to Pendo, but only if Pendo has loaded (it doesn't load
+  // until an API key is set in config.js).
+  function trackAgent(eventType, metadata) {
+    if (window.pendo && typeof window.pendo.trackAgent === 'function') {
+      window.pendo.trackAgent(eventType, metadata);
+    }
+  }
 
   function onAgentEvent(name, details) {
     console.log('[agent]', name, details);
-    if (PENDO_EVENTS[name] && window.pendo && pendo.track) {
-      pendo.track(PENDO_EVENTS[name], details);
+
+    if (name === 'send') {
+      // The visitor sent a message (typed, or clicked a suggestion chip).
+      trackAgent('prompt', {
+        agentId: PENDO_AGENT_ID,
+        conversationId: conversationId,
+        messageId: pendoMessageId(details.messageId),
+        content: details.text,
+        suggestedPrompt: details.suggested,
+        fileUploaded: false              // the mock chat has no file upload
+      });
+    } else if (name === 'reply') {
+      // The agent finished "typing" its reply. The tool-step lines
+      // ("Searching the knowledge base…") are sent as the tools it used.
+      trackAgent('agent_response', {
+        agentId: PENDO_AGENT_ID,
+        conversationId: conversationId,
+        messageId: pendoMessageId(details.messageId),
+        content: details.text,
+        toolsUsed: details.steps
+      });
+    } else if (name === 'feedback') {
+      // Thumbs up = "positive", thumbs down = "negative".
+      trackAgent('user_reaction', {
+        agentId: PENDO_AGENT_ID,
+        conversationId: conversationId,
+        messageId: pendoMessageId(details.messageId),
+        content: details.rating === 'up' ? 'positive' : 'negative'
+      });
     }
+    // 'copy' is only logged: it isn't one of Pendo's reaction types.
   }
 
 
@@ -174,34 +229,19 @@
         '<button class="msg-action action-down"  aria-label="Bad answer">👎</button>' +
       '</div>');
 
-    // The reply is fully typed out. (The reply text itself isn't sent; it's
-    // canned, so the topic and length say enough.)
-    onAgentEvent('reply', {
-      messageId: msg.getAttribute('data-message-id'),
-      matchedTopic: reply.topic,
-      isFallback: reply === FALLBACK,
-      stepCount: reply.steps.length,
-      sourceCount: reply.sources.length,
-      replyLength: reply.text.length
-    });
+    onAgentEvent('reply', { messageId: msg.getAttribute('data-message-id'), text: reply.text, steps: reply.steps });
     scrollToBottom();
     setBusy(false);
     input.focus();
   }
 
   // Send whatever is in the text box (or a suggestion's text).
-  // inputMethod says how it was sent: 'button', 'enter' or 'suggestion'.
-  function send(text, inputMethod) {
+  // suggested = true when it came from clicking a suggestion chip.
+  function send(text, suggested) {
     text = (text || '').trim();
-    if (!text || busy) return;            // empty or agent busy: nothing is sent, nothing tracked
+    if (!text || busy) return;
     var msg = addMessage('user', text);
-    onAgentEvent('send', {
-      messageId: msg.getAttribute('data-message-id'),
-      text: text.slice(0, 100),           // keep the Pendo event small
-      inputMethod: inputMethod,
-      messageLength: text.length,
-      messageIndex: log.querySelectorAll('.msg-user').length   // 1 = first message in this chat
-    });
+    onAgentEvent('send', { messageId: msg.getAttribute('data-message-id'), text: text, suggested: !!suggested });
     input.value = '';
     respondTo(text);
   }
@@ -210,6 +250,7 @@
   function newChat() {
     log.innerHTML = '';
     messageCount = 0;
+    conversationId = makeId();            // a fresh conversation for tracking
     addMessage('agent', GREETING);
     setBusy(false);
   }
@@ -230,7 +271,7 @@
   });
 
   document.querySelectorAll('#chat-suggestions .chip').forEach(function (chip) {
-    chip.addEventListener('click', function () { send(chip.textContent, 'suggestion'); });
+    chip.addEventListener('click', function () { send(chip.textContent, true); });
   });
 
   document.getElementById('agent-new-chat').addEventListener('click', newChat);

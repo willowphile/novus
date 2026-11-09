@@ -12,7 +12,12 @@
    ===================================================================== */
 
 (function () {
-  var apiKey = window.TS_CONFIG.pendoApiKey;
+  // The Pendo API key (the public, client-side install key). It is written
+  // here as plain text, and the same value is also set in config.js so the
+  // "has a key been set?" check below and the on-page notices agree.
+  var apiKey = '5e02edf6-4111-42d4-9158-d8e18b9706d8';
+  // Host the agent script is downloaded from (set in config.js).
+  var agentHost = window.TS_CONFIG.pendoAgentHost || 'cdn.pendo.io';
 
   // Don't try to load Pendo until a real key has been added in config.js.
   if (!window.TS_CONFIG.hasPendoKey) {
@@ -25,7 +30,7 @@
     var v, w, x, y, z;
     o = p[d] = p[d] || {};
     o._q = o._q || [];
-    v = ['initialize', 'identify', 'updateOptions', 'pageLoad', 'track'];
+    v = ['initialize', 'identify', 'updateOptions', 'pageLoad', 'track', 'trackAgent'];
     for (w = 0, x = v.length; w < x; ++w) (function (m) {
       o[m] = o[m] || function () {
         o._q[m === v[0] ? 'unshift' : 'push']([m].concat([].slice.call(arguments, 0)));
@@ -33,7 +38,7 @@
     })(v[w]);
     y = e.createElement(n);
     y.async = true;
-    y.src = 'https://cdn.pendo.io/agent/static/' + apiKey + '/pendo.js';
+    y.src = 'https://' + agentHost + '/agent/static/' + apiKey + '/pendo.js';
     z = e.getElementsByTagName(n)[0];
     z.parentNode.insertBefore(y, z);
   })(window, document, 'script', 'pendo');

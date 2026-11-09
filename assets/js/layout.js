@@ -151,7 +151,7 @@
 
     document.getElementById('topbar').innerHTML =
       '<button class="btn btn-icon menu-btn" id="menu-btn" aria-label="Open menu">☰</button>' +
-      '<strong>' + window.TS_CONFIG.siteName + ' Training Site</strong>' +
+      '<strong>' + window.TS_CONFIG.siteName + '</strong>' +
       '<span class="spacer"></span>' +
       '<button class="btn btn-icon btn-small" id="theme-toggle">' +
         (window.currentTheme() === 'dark' ? '☀️ Light' : '🌙 Dark') + '</button>' +

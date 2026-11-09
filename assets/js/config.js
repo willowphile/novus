@@ -10,10 +10,14 @@ window.TS_CONFIG = {
   // (the site works fine without it, you just won't see any data).
   // Also make sure the domain you host this site on is allowed in your
   // Pendo subscription's settings.
-  pendoApiKey: 'YOUR-PENDO-API-KEY',
+  pendoApiKey: '5e02edf6-4111-42d4-9158-d8e18b9706d8',
+
+  // Host that serves the Pendo agent script (pendo.js). Leave as
+  // 'cdn.pendo.io' for production Pendo; change it for other environments.
+  pendoAgentHost: 'cdn.pendo-dev.pendo-dev.com',
 
   // The name shown at the top of the left nav.
-  siteName: 'TS'
+  siteName: "A Novice's Novus Nexus"
 };
 
 // true once a real key has been pasted in above (other scripts check this)
